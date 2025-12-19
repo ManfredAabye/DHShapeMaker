@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable disable
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -31,6 +32,7 @@ namespace ShapeMaker
                 | ControlStyles.UserPaint, true);
         }
 
+        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
         public float Value
         {
             get { return adjustment(); }
@@ -41,6 +43,7 @@ namespace ShapeMaker
                 this.Refresh();
             }
         }
+        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
         public float minValue
         {
             get { return minvalue; }
@@ -50,6 +53,7 @@ namespace ShapeMaker
                 this.Refresh();
             }
         }
+        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
         public float maxValue
         {
             get { return maxvalue; }

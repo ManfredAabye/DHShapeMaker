@@ -3,14 +3,18 @@ using System.Collections;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using PaintDotNet;
+using PaintDotNet.Direct2D1;
 using PaintDotNet.Effects;
+using PaintDotNet.Imaging;
+using PaintDotNet.IndirectUI;
+using PaintDotNet.PropertySystem;
+using PaintDotNet.Rendering;
 using System.Windows.Forms;
 
 namespace ShapeMaker
 {
-    [PluginSupportInfo(typeof(PluginSupportInfo), DisplayName = "ShapeMaker")]
-    public class EffectPlugin
-        : PaintDotNet.Effects.Effect
+    [PluginSupportInfo<PluginSupportInfo>()]
+    public class EffectPlugin : Effect
     {
         public static string StaticName
         {
@@ -21,7 +25,7 @@ namespace ShapeMaker
         }
 
         
-        public static Bitmap StaticImage
+        public static Bitmap? StaticImage
         {
             get { return ShapeMaker.Properties.Resources.pdndwarvesicon2; }
         }
@@ -30,12 +34,12 @@ namespace ShapeMaker
         {
             get
             {
-                return  "Advanced"; 
+                return "Advanced"; 
             }
         }
 
         public EffectPlugin()
-            : base(EffectPlugin.StaticName, EffectPlugin.StaticImage, EffectPlugin.StaticSubMenuName, EffectFlags.Configurable)
+            : base(EffectPlugin.StaticName, EffectPlugin.StaticImage, EffectPlugin.StaticSubMenuName, new EffectOptions() { Flags = EffectFlags.Configurable })
         {
 
         }
@@ -58,20 +62,20 @@ namespace ShapeMaker
 
         private void MyRender(Surface dst, Surface src)
         {
-            PdnRegion selectionRegion = EnvironmentParameters.GetSelection(src.Bounds);
-            ColorBgra PrimaryColor = (ColorBgra)EnvironmentParameters.PrimaryColor;
-            ColorBgra SecondaryColor = (ColorBgra)EnvironmentParameters.SecondaryColor;
+            RectInt32 selectionBounds = src.Bounds;
+            ColorBgra PrimaryColor = EnvironmentParameters.PrimaryColor;
+            ColorBgra SecondaryColor = EnvironmentParameters.SecondaryColor;
             int BrushWidth = (int)EnvironmentParameters.BrushWidth;
-            if (PGP.Length > 0 && Draw )
+            if (PGP.Length > 0 && Draw)
             {
                 using (Graphics g = new RenderArgs(dst).Graphics)
                 {
-                    using (Region reg = new Region(selectionRegion.GetRegionData()))
+                    using (Region reg = new Region(new Rectangle(selectionBounds.X, selectionBounds.Y, selectionBounds.Width, selectionBounds.Height)))
                     {
                         g.SetClip(reg, CombineMode.Replace);
                     }
                     g.SmoothingMode = SmoothingMode.AntiAlias;
-                    Pen p = new Pen(PrimaryColor);
+                    Pen p = new Pen(Color.FromArgb(PrimaryColor.A, PrimaryColor.R, PrimaryColor.G, PrimaryColor.B));
                     p.Width = BrushWidth;
                     for (int i = 0; i < PGP.Length; i++)
                     {
@@ -81,6 +85,7 @@ namespace ShapeMaker
                             g.DrawPath(p, PGP[i]);
                         }
                     }
+                    p.Dispose();
                 }
             }
         }

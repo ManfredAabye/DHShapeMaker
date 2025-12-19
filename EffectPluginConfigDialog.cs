@@ -1,27 +1,28 @@
+#nullable disable
 //Elliptical Arc algorithm from svg.codeplex.com
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using PaintDotNet.Effects;
-using PaintDotNet;
-using System.Linq;
-using System.Text;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.Diagnostics;
-using System.Collections;
-using System.Reflection;
-using Controlz;
 using System.IO;
-using Microsoft.Win32;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using System.Xml.Serialization;
+using Controlz;
+using Microsoft.Win32;
+using PaintDotNet;
+using PaintDotNet.Effects;
 
 namespace ShapeMaker
 {
-    public class EffectPluginConfigDialog : PaintDotNet.Effects.EffectConfigDialog
+    public class EffectPluginConfigDialog : EffectConfigDialog
     {
         private PictureBox pb;
 
@@ -105,6 +106,7 @@ namespace ShapeMaker
         private ToolStripMenuItem flipHorizontalToolStripMenuItem;
         private ToolStripMenuItem flipVerticalToolStripMenuItem;
         private ToolStripMenuItem clearAllToolStripMenuItem;
+        private ToolStripMenuItem readingContoursToolStripMenuItem;
         private ToolTip toolTip1;
         private ToolStripMenuItem toolStripMenuItem4;
         private ToolStripMenuItem toolStripMenuItem1;
@@ -151,6 +153,7 @@ namespace ShapeMaker
         private TextBox FigureName;
         private BigKnobs SpinLine;
         private Button ClearBtn;
+        private Button DetectEdgesBtn;
         private NumericUpDown OutputScale;
         private Button buttonOK;
         private ListBox LineList;
@@ -250,6 +253,7 @@ namespace ShapeMaker
             this.flipHorizontalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.flipVerticalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.readingContoursToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.HelpMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.usersManualToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.QuickStartStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -284,6 +288,7 @@ namespace ShapeMaker
             this.ApplyBtn = new System.Windows.Forms.Button();
             this.FigureName = new System.Windows.Forms.TextBox();
             this.ClearBtn = new System.Windows.Forms.Button();
+            this.DetectEdgesBtn = new System.Windows.Forms.Button();
             this.OutputScale = new System.Windows.Forms.NumericUpDown();
             this.buttonOK = new System.Windows.Forms.Button();
             this.LineList = new System.Windows.Forms.ListBox();
@@ -475,6 +480,7 @@ namespace ShapeMaker
             this.toolStripMenuItem5,
             this.flipHorizontalToolStripMenuItem,
             this.flipVerticalToolStripMenuItem,
+            this.readingContoursToolStripMenuItem,
             this.clearAllToolStripMenuItem});
             this.pathToolsToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.pathToolsToolStripMenuItem.Name = "pathToolsToolStripMenuItem";
@@ -526,6 +532,13 @@ namespace ShapeMaker
             this.clearAllToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.clearAllToolStripMenuItem.Text = "Clear All";
             this.clearAllToolStripMenuItem.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // readingContoursToolStripMenuItem
+            // 
+            this.readingContoursToolStripMenuItem.Name = "readingContoursToolStripMenuItem";
+            this.readingContoursToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.readingContoursToolStripMenuItem.Text = "Reading contours";
+            this.readingContoursToolStripMenuItem.Click += new System.EventHandler(this.DetectEdgesBtn_Click);
             // 
             // HelpMenu
             // 
@@ -1038,6 +1051,28 @@ namespace ShapeMaker
             this.ClearBtn.MouseDown += new System.Windows.Forms.MouseEventHandler(this.GenericBtn_MouseDown);
             this.ClearBtn.MouseUp += new System.Windows.Forms.MouseEventHandler(this.GenericBtn_MouseUp);
             // 
+            // DetectEdgesBtn
+            // 
+            this.DetectEdgesBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(189)))), ((int)(((byte)(189)))), ((int)(((byte)(189)))));
+            this.DetectEdgesBtn.FlatAppearance.BorderColor = System.Drawing.Color.Black;
+            this.DetectEdgesBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.DetectEdgesBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DetectEdgesBtn.ForeColor = System.Drawing.Color.Black;
+            this.DetectEdgesBtn.Location = new System.Drawing.Point(724, 340);
+            this.DetectEdgesBtn.MaximumSize = new System.Drawing.Size(90, 45);
+            this.DetectEdgesBtn.MinimumSize = new System.Drawing.Size(90, 45);
+            this.DetectEdgesBtn.Name = "DetectEdgesBtn";
+            this.DetectEdgesBtn.Size = new System.Drawing.Size(90, 45);
+            this.DetectEdgesBtn.TabIndex = 2;
+            this.DetectEdgesBtn.TabStop = false;
+            this.DetectEdgesBtn.Text = "Konturen\r\nerkennen";
+            this.toolTip1.SetToolTip(this.DetectEdgesBtn, "Automatische Konturenerkennung aus Hintergrundbild");
+            this.DetectEdgesBtn.UseVisualStyleBackColor = false;
+            this.DetectEdgesBtn.Click += new System.EventHandler(this.DetectEdgesBtn_Click);
+            this.DetectEdgesBtn.Paint += new System.Windows.Forms.PaintEventHandler(this.GenericBtn_Paint);
+            this.DetectEdgesBtn.MouseDown += new System.Windows.Forms.MouseEventHandler(this.GenericBtn_MouseDown);
+            this.DetectEdgesBtn.MouseUp += new System.Windows.Forms.MouseEventHandler(this.GenericBtn_MouseUp);
+            // 
             // OutputScale
             // 
             this.OutputScale.BackColor = System.Drawing.Color.White;
@@ -1400,6 +1435,7 @@ namespace ShapeMaker
             this.Controls.Add(this.OutputScale);
             this.Controls.Add(this.opaque);
             this.Controls.Add(this.ClearBtn);
+            this.Controls.Add(this.DetectEdgesBtn);
             this.Controls.Add(this.panel8);
             this.Controls.Add(this.SpinLine);
             this.Controls.Add(this.FigureName);
@@ -1494,8 +1530,8 @@ namespace ShapeMaker
 
         private void EffectPluginConfigDialog_Load(object sender, EventArgs e)
         {
-            pb.BackgroundImage = EffectSourceSurface.CreateAliasedBitmap();
-            SuperSize = EffectSourceSurface.CreateAliasedBitmap().Size;
+            pb.BackgroundImage = this.EnvironmentParameters.SourceSurface.CreateAliasedBitmap();
+            SuperSize = this.EnvironmentParameters.SourceSurface.CreateAliasedBitmap().Size;
 
             if (SuperSize.Width >= SuperSize.Height)
             {
@@ -1915,7 +1951,7 @@ namespace ShapeMaker
                 mid3.Y = (2 * knots[0].Y + knots[1].Y) / 3;
 
                 /*
-                 * P2 = 2P1 � P0
+                 * P2 = 2P1 � P0
                  */
 
                 mid4.X = 2 * mid3.X - knots[0].X;
@@ -2896,6 +2932,205 @@ namespace ShapeMaker
         }
 
 
+        private void DetectEdgesBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Bitmap sourceBitmap = pb.BackgroundImage as Bitmap;
+                if (sourceBitmap == null)
+                {
+                    MessageBox.Show("Kein Hintergrundbild geladen.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Parameter-Dialog für bessere Kontrolle
+                using (Form paramDialog = new Form())
+                {
+                    paramDialog.Text = "Konturenerkennung - Einstellungen";
+                    paramDialog.ClientSize = new Size(390, 230);
+                    paramDialog.StartPosition = FormStartPosition.CenterParent;
+                    paramDialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+                    paramDialog.MaximizeBox = false;
+                    paramDialog.MinimizeBox = false;
+
+                    Label lblThreshold = new Label() { Text = "Empfindlichkeit (5-100):", Location = new Point(20, 20), Width = 150 };
+                    NumericUpDown numThreshold = new NumericUpDown() { Location = new Point(180, 18), Width = 180, Minimum = 5, Maximum = 100, Value = 15 };
+                    
+                    Label lblSampling = new Label() { Text = "Detailgrad (1-10):", Location = new Point(20, 60), Width = 150 };
+                    NumericUpDown numSampling = new NumericUpDown() { Location = new Point(180, 58), Width = 180, Minimum = 1, Maximum = 10, Value = 2 };
+                    
+                    Label lblMaxPoints = new Label() { Text = "Max. Punkte:", Location = new Point(20, 100), Width = 150 };
+                    NumericUpDown numMaxPoints = new NumericUpDown() { Location = new Point(180, 98), Width = 180, Minimum = 50, Maximum = 2000, Value = 1000, Increment = 50 };
+                    
+                    Label lblInfo = new Label() { 
+                        Text = "Niedrigere Empfindlichkeit = mehr Details\nNiedrigerer Detailgrad = mehr Punkte", 
+                        Location = new Point(20, 140), 
+                        Width = 350, 
+                        Height = 40 
+                    };
+
+                    Button btnOK = new Button() { Text = "OK", Location = new Point(200, 190), Width = 80, Height = 30, DialogResult = DialogResult.OK };
+                    Button btnCancel = new Button() { Text = "Abbrechen", Location = new Point(290, 190), Width = 80, Height = 30, DialogResult = DialogResult.Cancel };
+                    
+                    paramDialog.Controls.AddRange(new Control[] { lblThreshold, numThreshold, lblSampling, numSampling, lblMaxPoints, numMaxPoints, lblInfo, btnOK, btnCancel });
+                    paramDialog.AcceptButton = btnOK;
+                    paramDialog.CancelButton = btnCancel;
+
+                    if (paramDialog.ShowDialog() != DialogResult.OK)
+                        return;
+
+                    int threshold = (int)numThreshold.Value;
+                    int sampling = (int)numSampling.Value;
+                    int maxPoints = (int)numMaxPoints.Value;
+
+                    // Sobel Edge Detection durchführen
+                    Bitmap edgeMap = ApplySobelEdgeDetection(sourceBitmap, threshold);
+
+                    // Konturen extrahieren und als Linie hinzufügen
+                    List<PointF> edgePoints = ExtractEdgePoints(edgeMap, sampling, maxPoints);
+
+                    if (edgePoints.Count > 0)
+                    {
+                        pbpoint = edgePoints.ToArray();
+                        
+                        // Automatisch als Straight Line hinzufügen
+                        if (Lines.Count < 100)
+                        {
+                            Lines.Add(new PData(pbpoint, true, (int)LineTypes.Straight, false, false, "", false));
+                            LineList.Items.Add($"Konturen ({edgePoints.Count}P)");
+                            setUndo();
+                            LineList.SelectedIndex = Lines.Count - 1;
+                            pb.Refresh();
+                        }
+
+                        MessageBox.Show($"{edgePoints.Count} Konturpunkte erkannt und hinzugefügt.\n\nTipp: Verwenden Sie den Dialog, um die Einstellungen anzupassen.", 
+                            "Konturenerkennung", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Keine Konturen erkannt. Versuchen Sie einen niedrigeren Empfindlichkeitswert.", 
+                            "Konturenerkennung", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+
+                    edgeMap.Dispose();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fehler bei der Konturenerkennung: {ex.Message}", 
+                    "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private Bitmap ApplySobelEdgeDetection(Bitmap source, int threshold)
+        {
+            int width = source.Width;
+            int height = source.Height;
+            Bitmap result = new Bitmap(width, height);
+
+            // Sobel Kernels
+            int[,] gx = new int[,] { { -1, 0, 1 }, { -2, 0, 2 }, { -1, 0, 1 } };
+            int[,] gy = new int[,] { { -1, -2, -1 }, { 0, 0, 0 }, { 1, 2, 1 } };
+
+            for (int y = 1; y < height - 1; y++)
+            {
+                for (int x = 1; x < width - 1; x++)
+                {
+                    int pixelX = 0;
+                    int pixelY = 0;
+
+                    // Sobel Kernel anwenden
+                    for (int ky = -1; ky <= 1; ky++)
+                    {
+                        for (int kx = -1; kx <= 1; kx++)
+                        {
+                            Color pixel = source.GetPixel(x + kx, y + ky);
+                            int gray = (pixel.R + pixel.G + pixel.B) / 3;
+                            
+                            pixelX += gray * gx[ky + 1, kx + 1];
+                            pixelY += gray * gy[ky + 1, kx + 1];
+                        }
+                    }
+
+                    // Gradient berechnen
+                    int magnitude = (int)Math.Sqrt(pixelX * pixelX + pixelY * pixelY);
+                    
+                    // Threshold anwenden
+                    if (magnitude > threshold)
+                    {
+                        result.SetPixel(x, y, Color.White);
+                    }
+                    else
+                    {
+                        result.SetPixel(x, y, Color.Black);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private List<PointF> ExtractEdgePoints(Bitmap edgeMap, int samplingDistance, int maxPoints)
+        {
+            List<PointF> points = new List<PointF>();
+            int width = edgeMap.Width;
+            int height = edgeMap.Height;
+
+            // Edge-Punkte extrahieren (mit Sampling für Performance)
+            for (int y = 0; y < height; y += samplingDistance)
+            {
+                for (int x = 0; x < width; x += samplingDistance)
+                {
+                    Color pixel = edgeMap.GetPixel(x, y);
+                    if (pixel.R > 128) // Weiß = Kante erkannt
+                    {
+                        // WICHTIG: Koordinaten normalisieren (0.0 bis 1.0)
+                        float normalizedX = (float)x / (float)width;
+                        float normalizedY = (float)y / (float)height;
+                        points.Add(new PointF(normalizedX, normalizedY));
+                        
+                        if (points.Count >= maxPoints * 2)
+                            break;
+                    }
+                }
+                if (points.Count >= maxPoints * 2)
+                    break;
+            }
+
+            // Optional: Punkte sortieren für besseren Linienverlauf und auf maxPoints begrenzen
+            if (points.Count > 2)
+            {
+                points = SortPointsByProximity(points, maxPoints);
+            }
+
+            return points;
+        }
+
+        private List<PointF> SortPointsByProximity(List<PointF> points, int maxPoints)
+        {
+            if (points.Count == 0) return points;
+
+            List<PointF> sorted = new List<PointF>();
+            List<PointF> remaining = new List<PointF>(points);
+
+            // Startpunkt: linker oberer Punkt (normalisierte Koordinaten 0.0-1.0)
+            PointF current = remaining.OrderBy(p => p.X + p.Y).First();
+            sorted.Add(current);
+            remaining.Remove(current);
+
+            // Nächste Punkte nach Nähe hinzufügen (mit normalisierten Koordinaten)
+            while (remaining.Count > 0 && sorted.Count < maxPoints)
+            {
+                PointF nearest = remaining.OrderBy(p => 
+                    (p.X - current.X) * (p.X - current.X) + (p.Y - current.Y) * (p.Y - current.Y)).First();
+                sorted.Add(nearest);
+                remaining.Remove(nearest);
+                current = nearest;
+            }
+
+            return sorted;
+        }
+
         private void ApplyBtn_Click(object sender, EventArgs e)
         {
             SpinLine.Value = 180;
@@ -3722,7 +3957,7 @@ namespace ShapeMaker
                     g.FillRectangle(backgroundColorBrush, e.Bounds);
 
                 string itemText;
-                if (!(Lines[itemIndex] as PData).Alias.IsNullOrEmpty())
+                if (!string.IsNullOrEmpty((Lines[itemIndex] as PData).Alias))
                 {
                     itemText = (Lines[itemIndex] as PData).Alias;
                 }
@@ -4191,7 +4426,7 @@ namespace ShapeMaker
                     string figure = FigureName.Text;
                     Regex rgx = new Regex("[^a-zA-Z0-9 -]");
                     figure = rgx.Replace(figure, "");
-                    figure = (figure.IsNullOrEmpty()) ? "Untitled" : figure;
+                    figure = (string.IsNullOrEmpty(figure)) ? "Untitled" : figure;
                     output = output.Replace("~1", figure);
                     output = output.Replace("~2", TMP);
                     using (SaveFileDialog sfd = new SaveFileDialog())
@@ -4233,7 +4468,7 @@ namespace ShapeMaker
                     string figure = FigureName.Text;
                     Regex rgx = new Regex("[^a-zA-Z0-9 -]");
                     figure = rgx.Replace(figure, "");
-                    figure = (figure.IsNullOrEmpty()) ? "Untitled" : figure;
+                    figure = (string.IsNullOrEmpty(figure)) ? "Untitled" : figure;
                     output = output.Replace("~1", figure);
                     output = output.Replace("~2", TMP);
                     if (SolidFillMenuItem.Checked)
@@ -4935,6 +5170,23 @@ namespace ShapeMaker
                    sz.Height), GraphicsUnit.Pixel);
         }
 
+        private void GenericBtn_Paint(object sender, PaintEventArgs e)
+        {
+            Button s = (sender as Button);
+            int z = Convert.ToInt32(s.Tag);
+            e.Graphics.FillRectangle(new SolidBrush(BackColorConst), this.ClientRectangle);
+            
+            // Einfache Text-Darstellung für generische Buttons
+            using (StringFormat sf = new StringFormat())
+            {
+                sf.Alignment = StringAlignment.Center;
+                sf.LineAlignment = StringAlignment.Center;
+                e.Graphics.DrawString(s.Text, s.Font, 
+                    z == 1 ? Brushes.White : Brushes.Black, 
+                    s.ClientRectangle, sf);
+            }
+        }
+
         private void upList_Paint(object sender, PaintEventArgs e)
         {
             Button s = (sender as Button);
@@ -5129,7 +5381,7 @@ namespace ShapeMaker
                     string figure = FigureName.Text;
                     Regex rgx = new Regex("[^a-zA-Z0-9 -]");
                     figure = rgx.Replace(figure, "");
-                    figure = (figure.IsNullOrEmpty()) ? "Untitled" : figure;
+                    figure = string.IsNullOrEmpty(figure) ? "Untitled" : figure;
                     //output = output.Replace("~1", figure);
                     //output = output.Replace("~2", TMP);
                     using (SaveFileDialog sfd = new SaveFileDialog())
@@ -5191,7 +5443,7 @@ namespace ShapeMaker
             if (LineList.Items.Count == 0) return;
             string s = Microsoft.VisualBasic.Interaction.InputBox("Name?", "Path Name",
                 LineList.SelectedItem.ToString(), -1, -1);
-            if (!s.IsNullOrEmpty()) (Lines[LineList.SelectedIndex] as PData).Alias = s;
+            if (!string.IsNullOrEmpty(s)) (Lines[LineList.SelectedIndex] as PData).Alias = s;
         }
 
         private void label2_Layout(object sender, LayoutEventArgs e)

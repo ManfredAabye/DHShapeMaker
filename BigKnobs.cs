@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable disable
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -26,6 +27,7 @@ namespace Controlz
         bool rtating = false;
         Image BottomImage, MidImage, TopImage;
 
+        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
         public float Value
         {
             get { return adjustment(); }
@@ -35,6 +37,7 @@ namespace Controlz
                 this.Refresh();
             }
         }
+        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
         public float minValue
         {
             get { return minvalue; }
@@ -44,6 +47,7 @@ namespace Controlz
                 this.Refresh();
             }
         }
+        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
         public float maxValue
         {
             get { return maxvalue; }
@@ -54,6 +58,7 @@ namespace Controlz
             }
         }
 
+        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
         public float Offset
         {
             get { return offset; }
@@ -63,6 +68,7 @@ namespace Controlz
                 this.Refresh();
             }
         }
+        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
         public float Span
         {
             get { return span; }
@@ -73,6 +79,7 @@ namespace Controlz
             }
         }
 
+        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
         public float SpinRate
         {
             get { return spinrate; }
@@ -83,6 +90,7 @@ namespace Controlz
             }
         }
 
+        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
         public Image KnobBase
         {
             get { return this.BottomImage; }
@@ -93,6 +101,7 @@ namespace Controlz
             }
         }
 
+        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
         public Image KnobDial
         {
             get { return this.MidImage; }
@@ -102,6 +111,7 @@ namespace Controlz
                 this.Refresh();
             }
         }
+        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
         public Image KnobTop
         {
             get { return this.TopImage; }

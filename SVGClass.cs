@@ -1,4 +1,5 @@
-﻿//Classes from http://svg.codeplex.com/
+﻿#nullable disable
+//Classes from http://svg.codeplex.com/
 using System;
 using System.Collections.Generic;
 using System.Text;
